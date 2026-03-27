@@ -1,67 +1,101 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>WeatherApp - Previsioni Meteo</title>
-				<link rel="stylesheet" th:href="@{/css/style.css}">
-					<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherApp - Previsioni Meteo</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-					<body th:class="${bgClass}">
-						<div class="container">
-							<div class="weather-card">
-								<h1>WeatherApp</h1>
-								<div class="subtitle">Previsioni meteorologiche accurate</div>
-								<form action="/weather" method="post" class="search-form">
-									<input type="text" name="city" placeholder="Inserisci il nome di una città..." required>
-									<button type="submit">
-										<span>Cerca</span>
-									</button>
-								</form>
-								<!-- Mostra i dati meteo solo se success è true -->
-								<div th:if="${success != null and success}" class="weather-info">
-									<div th:if="${weather != null}">
-										<div class="city-header">
-											<div class="city-name" th:text="${weather.city}">Città</div>
-											<div class="weather-condition" th:text="${weather.weatherDescription}">Condizioni</div>
-										</div>
-										<div class="temperature-container">
-											<div class="temperature">
-												<span th:text="${weather.temperature}">0</span>
-												<span class="temperature-unit">°C</span>
-											</div>
-										</div>
-										<div class="details-grid">
-											<div class="detail-card">
-												<span class="detail-label">Percepita</span>
-												<span class="detail-value">
-													<span th:text="${weather.feelsLike}">0</span>
-													<span class="detail-unit">°C</span>
-												</span>
-											</div>
-											<div class="detail-card">
-												<span class="detail-label">Umidità</span>
-												<span class="detail-value">
-													<span th:text="${weather.humidity}">0</span>
-													<span class="detail-unit">%</span>
-												</span>
-											</div>
-											<div class="detail-card">
-												<span class="detail-label">Vento</span>
-												<span class="detail-value">
-													<span th:text="${weather.windSpeed}">0</span>
-													<span class="detail-unit">km/h</span>
-												</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<!-- Mostra l'errore solo se c'è un errore -->
-								<div th:if="${error != null}" class="error-message">
-									<p th:text="${error}">Errore</p>
-								</div>
-							</div>
-						</div>
-					</body>
-				</html>
+<body th:class="${bgClass}">
+    <div class="container">
+        <div class="weather-card">
+            <h1>WeatherApp</h1>
+            <div class="subtitle">Previsioni meteorologiche accurate a 5 giorni</div>
+            
+            <form action="/weather" method="post" class="search-form">
+                <input type="text" name="city" placeholder="Inserisci il nome di una città..." required>
+                <button type="submit">
+                    <span>Cerca</span>
+                </button>
+            </form>
+            
+            <!-- Mostra i dati meteo solo se success è true -->
+            <div th:if="${success}" class="weather-info">
+                <div th:if="${weather != null}">
+                    <!-- Dati attuali -->
+                    <div class="city-header">
+                        <div class="city-name" th:text="${weather.city}">Città</div>
+                        <div class="weather-condition" th:text="${weather.weatherDescription}">Condizioni</div>
+                    </div>
+                    
+                    <div class="temperature-container">
+                        <div th:unless="${iconClass != null}" class="weather-icon icon-mild"></div>
+                        <div class="temperature">
+                            <span th:text="${weather.temperature}">0</span>
+                            <span class="temperature-unit">°C</span>
+                        </div>
+                    </div>
+                    
+                    <div class="details-grid">
+                        <div class="detail-card">
+                            <span class="detail-label">Percepita</span>
+                            <span class="detail-value">
+                                <span th:text="${weather.feelsLike}">0</span>
+                                <span class="detail-unit">°C</span>
+                            </span>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <span class="detail-label">Umidità</span>
+                            <span class="detail-value">
+                                <span th:text="${weather.humidity}">0</span>
+                                <span class="detail-unit">%</span>
+                            </span>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <span class="detail-label">Vento</span>
+                            <span class="detail-value">
+                                <span th:text="${weather.windSpeed}">0</span>
+                                <span class="detail-unit">km/h</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Previsioni 5 giorni - Versione SEMPLIFICATA che funziona -->
+                    <div class="forecast-section">
+                        <h3>📅 Previsioni 5 Giorni</h3>
+                        <div class="forecast-grid">
+                            <div th:each="forecast : ${weather.dailyForecasts}" class="forecast-card">
+                                <div class="forecast-day">
+                                    <span class="day-name" th:text="${forecast.dayOfWeek}">-</span>
+                                    <span class="forecast-date" th:text="${forecast.formattedDate}">-</span>
+                                </div>
+                                <div class="forecast-temp">
+                                    <div class="temp-max">
+                                        <span class="temp-label">Max</span>
+                                        <span class="temp-value" th:text="${forecast.maxTemperature}">0</span>
+                                        <span class="temp-unit">°C</span>
+                                    </div>
+                                    <div class="temp-min">
+                                        <span class="temp-label">Min</span>
+                                        <span class="temp-value" th:text="${forecast.minTemperature}">0</span>
+                                        <span class="temp-unit">°C</span>
+                                    </div>
+                                </div>
+                                <div class="forecast-desc" th:text="${forecast.weatherDescription}">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mostra l'errore solo se c'è un errore -->
+            <div th:if="${error != null}" class="error-message">
+                <p th:text="${error}">Errore</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

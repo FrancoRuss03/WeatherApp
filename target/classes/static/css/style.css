@@ -6,19 +6,26 @@
 
 body {
     font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
-    min-height: 100vh;
+    /* Usa min-height, MAI height: 100vh se il contenuto è lungo */
+    min-height: 100vh; 
+    
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 20px;
-    transition: background 0.6s ease-in-out;
-    /* CRITICO: Impedisce la comparsa di scrollbar causate dalle animazioni degli pseudo-elementi */
-    overflow: hidden; 
+    /* Allinea all'inizio per permettere lo scroll naturale */
+    align-items: flex-start; 
+    
+    /* Spazio sopra e sotto la card */
+    padding: 40px 20px; 
+    
+    /* Gestione scroll: fondamentale */
+    overflow-y: visible !important; 
+    overflow-x: hidden;
+    
     position: relative;
-    width: 100vw;
+    width: 100%;
+    margin: 0;
 }
 
-/* Sfondo iniziale quando non c'è ancora una città */
 .bg-default {
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     position: relative;
@@ -440,14 +447,13 @@ body {
     }
 }
 
-/* Stili per la card e gli altri elementi */
 .container {
     width: 100%;
     max-width: 550px;
     position: relative;
     z-index: 1;
-    animation: fadeInUp 0.6s ease-out;
-    overflow: visible;
+    /* Rimuovi eventuali height: 100% qui se presenti */
+    margin: 0 auto;
 }
 
 .weather-card {
@@ -718,5 +724,128 @@ h1 {
     .weather-icon {
         width: 80px;
         height: 80px;
+    }
+}
+/* Stili per le previsioni */
+.forecast-section {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 2px solid #f0f2f5;
+}
+
+.forecast-section h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.forecast-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.forecast-card:hover {
+    transform: translateY(-3px);
+    background: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.forecast-day {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e4e8;
+}
+
+.day-name {
+    display: block;
+    font-weight: 600;
+    font-size: 1.1em;
+    color: #2c3e50;
+}
+
+.forecast-date {
+    display: block;
+    font-size: 0.75em;
+    color: #7f8c8d;
+    margin-top: 3px;
+}
+
+.forecast-temp {
+    display: flex;
+    justify-content: space-around;
+    margin: 12px 0;
+}
+
+.temp-max, .temp-min {
+    text-align: center;
+}
+
+.temp-label {
+    display: block;
+    font-size: 0.7em;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.temp-max .temp-value {
+    color: #e67e22;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.temp-min .temp-value {
+    color: #3498db;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.forecast-desc {
+    font-size: 0.85em;
+    color: #2c3e50;
+    margin: 10px 0;
+}
+
+.forecast-precip {
+    font-size: 0.8em;
+    color: #2980b9;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 20px;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+/* Responsive per previsioni */
+@media (max-width: 768px) {
+    .forecast-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+    
+    .forecast-card {
+        padding: 12px;
+    }
+    
+    .temp-max .temp-value,
+    .temp-min .temp-value {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 600px) {
+    .forecast-grid {
+        grid-template-columns: 1fr;
     }
 }

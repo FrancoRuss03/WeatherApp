@@ -2,6 +2,7 @@ package com.weather.spring.controller;
 
 import com.weather.spring.model.WeatherData;
 import com.weather.spring.service.WeatherService;
+import com.weather.spring.service.OpenMeteoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,9 @@ public class WeatherController {
     @Autowired
     private WeatherService weatherService;
     
+    @Autowired
+    private OpenMeteoService openMeteoService;
+    
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("success", false);
@@ -26,6 +30,7 @@ public class WeatherController {
     public String getWeather(@RequestParam("city") String city, Model model) {
         try {
             WeatherData weather = weatherService.getWeatherByCity(city);
+            
             model.addAttribute("weather", weather);
             model.addAttribute("success", true);
             model.addAttribute("error", null);
@@ -34,10 +39,16 @@ public class WeatherController {
             String bgClass = getBackgroundClass(weather.getTemperature());
             model.addAttribute("bgClass", bgClass);
             
+            // Aggiungi la classe dell'icona
+            String iconClass = getIconClass(weather.getTemperature());
+            model.addAttribute("iconClass", iconClass);
+            
         } catch (Exception e) {
+            e.printStackTrace();
             model.addAttribute("success", false);
             model.addAttribute("error", e.getMessage());
             model.addAttribute("bgClass", "bg-default");
+            model.addAttribute("iconClass", "icon-mild");
         }
         return "weather";
     }
@@ -58,5 +69,13 @@ public class WeatherController {
         if (temperature <= 32) return "bg-mediterranean";
         if (temperature <= 35) return "bg-desert";
         return "bg-volcano";
+    }
+    
+    private String getIconClass(double temperature) {
+        if (temperature < 0) return "icon-cold";
+        if (temperature < 10) return "icon-cool";
+        if (temperature < 20) return "icon-mild";
+        if (temperature < 30) return "icon-warm";
+        return "icon-hot";
     }
 }
